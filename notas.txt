@@ -1,0 +1,76 @@
+### Imersão Full-Cycle 15 - CODE PIX ###
+
+Estudo de caso - CodePix
+1 - É uma solução para simularmos transferencias de valores entre bancos ficticios atraves de chaves (email, cpf)
+2 - Simularemos diversos bancos e contas bancarias que possuem uma chave Pix atribuida 
+3 - Cada conta bancaria podera cadastrar suas chave Pix
+4 - Uma conta bancaria podera realizar uma transferencia para outra conta em outro banco utilizano a chave Pix da conta de destino
+5 - Uma transação não pode ser perdida mesmo que: o CodePix esteja fora do ar
+6 - Uma transação não pode ser perdida mesmo que: o Banco de destino esteja fora do ar
+
+Sobre os bancos
+1 - o banco sera um microsserviço com funções limitadas a cadastro de contas e chaves Pix, bem como transferencia de valores
+2 - Utilizaremos a mesma aplicação para simularmos diversos bancos, mudando apenas as cores, nome e código
+3 - Nest.js no backend
+4 - Next.js no frontend
+5 - Container docker para diferenciação dos bancos: Banco BBX #1 - Banco CTD #2
+
+Sobre o CodePix
+1 - o microsserviço CodePix sera responsavel por intermediar as transferencias bancarias
+2 - Receberá a transação de transferencia
+3 - Encaminhará a transação para o banco de destino - com status "pending"
+4 - Receberá a confirmação do banco de destino - com status "confirmed"
+5 - Enviará a confirmação para o banco de origem informando que o banco de destino processou a transação
+6 - Receberá a confirmação do banco de origem de que ele processou a confirmação - com status "completed"
+7 - Marcará a transação como completa - status completed
+
+
+Cadastro e consulta de chave Pix
+1 - O banco BBX irá efetuar uma consulta no CodePix, afim de verificar a existencia da chave pix que está sendo criada
+2 - O banco BBX irá enviar a solicitação de criação da chave pix, caso ela não tenha sido criada
+3 - O banco BBX irá receber a confirmação da criação da chave pix, vinda do CodePix
+
+Principais desafios
+1 - Comunicação rápida e eficiente
+2 - Criação e consulta instantanea das chaves (Sincrona)
+3 - Garantia de que nenhuma transação seja perdida, mesmo que qualquer dos 3 sistemas estjam fora do ar (Assincrona)
+
+Ferramentas
+1 - Comunicação via gRPC - Framework - Protocol Buffers
+2 - Para Comunicação assincrona - Apache Kafka - processamento de dados de um lado para outro - Stream de Dados
+
+Arquitetura CodePix
+1 - Será capaz de atuar como um servidor gRPC
+2 - Consumir e publicar mensagens no Apache Kafka
+3 - Ambas operações devem ser realizadas de forma simultanea ao executar o serviço
+4 - Trabalhar com um design focado em solucionar o problema do dominio (DDD)
+5 - Deixar a complexidade técnica para "camada de aplicação", responsavel pelo servidor gRPC e Kafka
+6 - Aplicação flexivel para implementação de outros formatos de comunicação.Como API Rest, CLI, etc.
+sem alterar nenhum outro componente da aplicação ou modelo de dominio
+7 - Arquitetura Hexagonal / Port and Adapters
+
+
+
+### Anotações ###
+
+- Subindo container do projeto:
+> docker-compose up -d
+
+- Entrando no container do APP:
+> docker exec -it imersao15-app-1 bash
+
+- Iniciando módulos Go (dentro do container) (onde fica as libs que usamos no projeto):
+> go mod init github.com/alexdevelp/code-pix
+
+- Para rodar os testes 
+> go test ./...
+
+
+- Comando gRPC para compilar nossos contratos
+protoc --go_out=application/grpc/pb --go_opt=paths=source_relative --go-grpc_out=application/grpc/pb --go-grpc_opt=paths=source_relative --proto_path=application/grpc/protofiles application/grpc/protofiles/*.proto
+
+- Comando para rodar o servidor (aula 2)
+> go run cmd/main.go
+
+# gRPC
+https://grpc.io/
