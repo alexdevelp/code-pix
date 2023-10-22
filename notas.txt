@@ -65,12 +65,97 @@ sem alterar nenhum outro componente da aplicação ou modelo de dominio
 - Para rodar os testes 
 > go test ./...
 
+- Comando para instalar pacotes go:
+> go mod tidy
 
-- Comando gRPC para compilar nossos contratos
-protoc --go_out=application/grpc/pb --go_opt=paths=source_relative --go-grpc_out=application/grpc/pb --go-grpc_opt=paths=source_relative --proto_path=application/grpc/protofiles application/grpc/protofiles/*.proto
+- Listar versões de pacotes, Exemplo confluente-kafka-go 
+> go list -m -versions github.com/confluentinc/confluent-kafka-go
 
-- Comando para rodar o servidor (aula 2)
+
+- Comando gRPC para compilar nossos contratos (stubs):
+1 - protoc --go_out=application/grpc/pb --go_opt=paths=source_relative --go-grpc_out=application/grpc/pb --go-grpc_opt=paths=source_relative --proto_path=application/grpc/protofiles application/grpc/protofiles/*.proto
+2 - protoc --proto_path=proto/ proto/*.proto --plugin=$(go env GOPATH)/bin/protoc-gen-go-grpc --go-grpc_out=. --go_out=.
+3 - protoc --proto_path=application/grpc/protofiles application/grpc/protofiles/*.proto --plugin=$(go env GOPATH)/bin/protoc-gen-go-grpc --go-grpc_out=. --go_out=.
+
+
+- Comando para rodar o servidor (aula 2) (dentro do container) (precisa ter o arquivo main.go na pasta cmd):
 > go run cmd/main.go
+- Rodando o app com a CLI Cobra:
+> go run main.go grpc
+> go run main.go grpc --port 50052
+
+- Clint Interativo para gRPC (dentro do container) (antes, verificar se o servidor gRPC está rodando na porta 50051):
+> evans -r repl
+
+- Precisa iniciar o cobra
+> cobra-cli init
+> cobra-cli add grpc
+
+- No servidro gRPC, usando o evans, precisamos ir definindo o serviço a ser trabalhado:
+> package 
+> service
+> show
+
+
+### Apache Kafka - Transações Assincronas - Poque o Kakfka? ###
+- Event-driven
+> Carros
+> E-commerce
+> Alarmes/notificações
+> Monitoramento
+> Microsserviços (transações assincronas)
+
+- Tempo Real (throughput de 2ms)
+- Histórico de dados
+
+# Principais Caracteristicas
+> Plataforma
+> Trabalha de forma distribuída
+> Banco de dados
+> Extremamente rapido e com baixa latencia
+> Utiliza o disco ao inves de memoria para processar os dados
+
+#Ecosistema
+> Kakfak Connect
+    - connectors (banco a com banco b, pro exemplo)
+> Confluent Schema Registry
+> Rest Proxy 
+> ksqlDB (SQL do kafka) (query no kakfa em tempo real)
+> Stream
+
+#OBS: NÃO é apens um sistema tradicional de filas como RabbitMQ ou Amazon SQS
+#OBS: Iniciar Kakfa com o cobra (cobra add kafka)
+
+# Conceito basico
+-Topic
+> stream que atua como um banco de dados
+> Todos os dados ficam armezenados, ou seja cada topico tem seu "local" para armazenar seus dados.
+> Tópico possui diversas partições
+    * cada partição é definida por um numero. Exemplo 0,1,2..
+    * Você é obrigado a definir a quantidade de partições quando for criar um topic
+
+#Kafka Cluster
+> Conjuto de Brokers (maquinas)
+> Cada broker é um server
+> Cada Broker é responsável por armazenar os dados de uma partição
+> Cada partição de um Topic está distribuído em diferentes brokers
+
+
+# Kafka comandos
+- Dentro do container kafka, listar topicos
+> kafka-topics --list --bootstrap-server=localhost:9092
+
+- Rodando bootstrap-server:
+> kafka-console-consumer --topic=Teste --bootstrap-server=localhost:9092
+
+- Temos o control center - visual
+http://localhost:9021
+
+
+
+
+
+
 
 # gRPC
 https://grpc.io/

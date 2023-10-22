@@ -3,11 +3,15 @@ version: "3"
 services:
   app:
     build: .
+    ports:
+    - "50051:50051"
     volumes:
       - .:/go/src/
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   db:
-    image: postgres:9.4
+    image: postgres:13-alpine
     restart: always
     tty: true
     volumes:
@@ -39,7 +43,7 @@ services:
       KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,OUTSIDE://host.docker.internal:9094
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
     extra_hosts:
-      - "host.docker.internal:172.17.0.1"
+      - "host.docker.internal:host-gateway"
 
   kafka-topics-generator:
     image: confluentinc/cp-kafka:latest
@@ -53,7 +57,7 @@ services:
       kafka-topics --create --topic=bank001 --if-not-exists --bootstrap-server=kafka:9092 &&
       kafka-topics --create --topic=bank002 --if-not-exists --bootstrap-server=kafka:9092"
     extra_hosts:
-      - "host.docker.internal:172.17.0.1"
+      - "host.docker.internal:host-gateway"
 
   control-center:
     image: confluentinc/cp-enterprise-control-center:6.0.1
@@ -68,7 +72,7 @@ services:
       PORT: 9021
 
   pgadmin:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:7.6
     tty: true
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@user.com
