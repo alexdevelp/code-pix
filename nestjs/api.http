@@ -1,13 +1,26 @@
 GET http://localhost:3000/bank-accounts 
 
 ###
-GET http://localhost:3000/bank-accounts/d6747dd1-5cfe-4ba4-87d0-7e1b48d71f49
+GET http://localhost:3000/bank-accounts/e43102b4-d668-43e6-a406-9445cbc1c4a1
 
 ###
 POST http://localhost:3000/bank-accounts 
 Content-Type: application/json
 
 {
-    "account_name": "1111-3",
+    "account_name": "1111-2",
     "owner_name": "John Doe"
+}
+
+
+###
+GET http://localhost:3000/bank-accounts/e43102b4-d668-43e6-a406-9445cbc1c4a1/pix-keys
+
+###
+POST http://localhost:3000/bank-accounts/e43102b4-d668-43e6-a406-9445cbc1c4a1/pix-keys
+Content-Type: application/json
+
+{
+    "key": "alexandre@placecode.com.br",
+    "kind": "email"
 }

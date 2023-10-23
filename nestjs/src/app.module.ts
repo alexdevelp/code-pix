@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { BankAccountsModule } from './bank-accounts/bank-accounts.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BankAccount } from './bank-accounts/entities/bank-account.entity';
+import { AppController } from './app.controller';
 import { PixKeysModule } from './pix-keys/pix-keys.module';
+import { PixKey } from './pix-keys/entities/pix-key.entity';
+import { BankAccountsModule } from './bank-accounts/bank-accounts.module';
+import { BankAccount } from './bank-accounts/entities/bank-account.entity';
 
 @Module({
   controllers: [AppController],
@@ -16,7 +17,7 @@ import { PixKeysModule } from './pix-keys/pix-keys.module';
       database: 'nest',
       username: 'postgres',
       password: 'root',
-      entities: [BankAccount],
+      entities: [BankAccount, PixKey],
       synchronize: true,
     }),
     BankAccountsModule,
