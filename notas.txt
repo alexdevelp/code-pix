@@ -153,6 +153,13 @@ http://localhost:9021
 
 
 
+### DEV Container
+- Select Features
+> ZSH Plugins
+> Shell History
+> Common Utilities
+
+
 
 
 
